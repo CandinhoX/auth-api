@@ -6,6 +6,7 @@ import io.github.CandinhoX.authapi.repositories.UserRepository;
 import io.github.CandinhoX.authapi.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +14,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Transactional
     @Override
     public UserDto save(UserDto userDto) {
@@ -21,9 +24,10 @@ public class UserServiceImpl implements UserService {
         if(existedUser != null){
             throw new RuntimeException("User already exist");
         }
-
-        var entity =  new User(userDto.name(), userDto.login(), userDto.password());
+        var passwordHash = passwordEncoder.encode(userDto.password());
+        var entity =  new User(userDto.name(), userDto.login(), passwordHash);
         var newUser = userRepository.save(entity);
         return new UserDto(newUser.getName(), newUser.getLogin(), newUser.getPassword());
+        
     }
 }
