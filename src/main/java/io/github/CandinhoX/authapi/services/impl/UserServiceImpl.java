@@ -28,6 +28,6 @@ public class UserServiceImpl implements UserService {
         var entity =  new User(userDto.name(), userDto.login(), passwordHash);
         var newUser = userRepository.save(entity);
         return new UserDto(newUser.getName(), newUser.getLogin(), newUser.getPassword());
-        
+
     }
 }
